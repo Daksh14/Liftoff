@@ -1,14 +1,28 @@
 {
-    "name": "greeter-bot",
+    "name": "Liftoff",
     "version": "1.0.0",
-    "description": "My First Discord Bot",
+    "description": "Liftoff is a space launch info bot",
     "main": "bot.js",
-    "author": "Your Name",
+    "author": "weegee",
     "dependencies": {
-        "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
+        "discord.js": "^11.5.1",
+        "ejs": "^3.0.1",
+        "express": "^4.17.1",
         "fs-extra": "^8.1.0",
+        "launchlib-js": "^1.0.0",
         "moment": "^2.24.0",
+        "sqlite3": "^4.1.0",
         "winston": "^3.2.1",
         "worker-threads": "^1.0.0"
+    },
+    "scripts": {
+        "start": "node .",
+        "now-start": "node .",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": {
+            "env": {
+                "token": "@token"
+            }
+        }
     }
 }
