@@ -7,15 +7,15 @@
  *  with the OKOTO bot for our Aerospace Eng. server.
  *  Server invite-link: https://discord.gg/dt4zf6g
  */
-const Discord = require('discord.js');
-const bot = new Discord.Client();
+const Discord = require('discord.js')
+const bot = new Discord.Client()
 /**
  * Contains the bot's secret
  */
 const auth = process.env.TOKEN
 bot.on('ready', () => {
-  console.log(`Logged in`);
-});
+  console.log(`Logged in`)
+})
 bot.login(auth)
 /**
  * Moment library instance for working with dates
@@ -25,12 +25,12 @@ const moment = require('moment')
  * SQLite3 database API instance. Using this for storing roles
  * and the SQLite3 database location
  */
-const sqlite3 = require('sqlite3').verbose();
-const dbFile = 'liftoff.db';
+const sqlite3 = require('sqlite3').verbose()
+const dbFile = 'liftoff.db'
 let db = new sqlite3.Database(dbFile, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
     if (err) { console.error(err.message) }
     db.serialize(function() {
-        db.run('CREATE TABLE IF NOT EXISTS "events" ("id" INTEGER PRIMARY KEY AUTOINCREMENT,"server_id" TEXT,"role_id" TEXT,"channel_id" TEXT);');
+        db.run('CREATE TABLE IF NOT EXISTS "events" ("id" INTEGER PRIMARY KEY AUTOINCREMENT,"server_id" TEXT,"role_id" TEXT,"channel_id" TEXT);')
         console.log("db created")
     })
 })
@@ -52,15 +52,15 @@ const app = express()
  * Run the http server
  */
 app.get("/", (request, response) => {
-  response.sendStatus(200);
-});
+  response.sendStatus(200)
+})
 /**
  * Keep on send requests to our bot's domain just to
  * keep it alive :)
  */
 setInterval(() => {
-  http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
-}, 280000);
+  http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`)
+}, 280000)
 app.listen(process.env.PORT)
 /**
  * Launchlibrary instance
@@ -88,7 +88,7 @@ let literations = []
  * Then it notifies the user/role about it
  */
 let interval = setInterval(() => {
-    let now = moment().format('MMMM Do YYYY, h:mm:ss a');
+    let now = moment().format('MMMM Do YYYY, h:mm:ss a')
     launchLib.get('getLaunches', '5').then(data => {
         data.launches.forEach((launchesInfo) => {
             try {
@@ -120,7 +120,7 @@ let interval = setInterval(() => {
         })
     }).catch((err) => {
         console.log(err)
-    });
+    })
 }, pingInterval)
 
 bot.on('message', msg => {
@@ -137,11 +137,11 @@ bot.on('message', msg => {
                     msg.channel.send(embed)
                 }).catch(err => {
                     console.log(err)
-                    msg.channel.send("There's a problem, the author is informed");
+                    msg.channel.send("There's a problem, the author is informed")
                 })
-            break;
+            break
             case ";launchlist":
-                let embed = new Discord.RichEmbed();
+                let embed = new Discord.RichEmbed()
                 launchLib.get('getLaunches', '10').then(data => {
                     let launchesArr = data.launches.forEach((launches) => {
                         let vid = typeof launches.vidURLs[0] == "undefined" ? "Not available" : launches.vidURLs[0]
@@ -153,30 +153,30 @@ bot.on('message', msg => {
                 })
                 .catch(err => {
                     console.log(err)
-                    msg.channel.send("There's a problem, the author is informed");
+                    msg.channel.send("There's a problem, the author is informed")
                 })
-            break;
+            break
             case ";eventrole":
                 fun.getIds(serverID, db,  (filteredID, filteredChannelId) => {
-                    let embed = new Discord.RichEmbed();
+                    let embed = new Discord.RichEmbed()
                     embed.setTitle("Roles to ping when launches are near")
                     let channelName = msg.guild.channels.find(ch => ch.id === filteredChannelId).name
                     let roleName = msg.guild.roles.find(ch => ch.id === filteredID).name
                     embed.setDescription("Role name: " + roleName +". \n Event-Channel-name: " + channelName)
                     msg.channel.send(embed)
                 })
-            break;
+            break
             case ";help":
                 let helpEmbed = fun.helpEmbeds()
                 helpEmbed.setTitle("Command list")
                 msg.channel.send(helpEmbed)
-            break;
+            break
         }
     } else {
         if (message.includes(";!register")) {
             let role = fun.getRole(message)
             if (!role[0].includes("@") || !role[0].includes("&") || !role[1].includes("#") || role[1].includes("!") || role[0].includes("!")) {
-                let embed = new Discord.RichEmbed();
+                let embed = new Discord.RichEmbed()
                 embed.setTitle("Event role and channel")
                 embed.setDescription("Bad synatx, the correct synatx is : `;!register <rolename> <channel-name>`")
                 msg.channel.send(embed)
@@ -192,33 +192,33 @@ bot.on('message', msg => {
                                 3: role[1]
                             }, (err) => {
                                 if (err) {
-                                    console.error(err.message);
-                                    msg.channel.send("There's a problem, the author is informed");
+                                    console.error(err.message)
+                                    msg.channel.send("There's a problem, the author is informed")
                                 }
                                 msg.channel.send("Role successfully set")
                             })
                         })
                     } else if (state === "exists") {
                         if (row.role_id == role[0] && row.channel_id == role[1]) {
-                            let embed = new Discord.RichEmbed();
+                            let embed = new Discord.RichEmbed()
                             embed.setTitle("Event role and channel")
                             embed.setDescription("This role already exists for channel " + role[1])
                             msg.channel.send(embed)
                         }else{
                             if (row.role_id == role[0]) {
-                                let embed = new Discord.RichEmbed();
+                                let embed = new Discord.RichEmbed()
                                 embed.setTitle("Event role and channel")
                                 embed.setDescription("Changing channels")
                                 msg.channel.send(embed)
                                 fun.changeChannel(serverID, db, role, () => msg.channel.send("Done"))
                             } else if (row.channel_id == role[1]) {
-                                let embed = new Discord.RichEmbed();
+                                let embed = new Discord.RichEmbed()
                                 embed.setTitle("Event role and channel")
                                 embed.setDescription("Changing roles")
                                 msg.channel.send(embed)
                                 fun.changeRole(serverID, db, role, () => msg.channel.send("Done"))
                             } else {
-                                let embed = new Discord.RichEmbed();
+                                let embed = new Discord.RichEmbed()
                                 embed.setTitle("Event role and channel")
                                 embed.setDescription("Changing roles and channel")
                                 msg.channel.send(embed)
@@ -230,4 +230,4 @@ bot.on('message', msg => {
             }
         }
     }
-});
+})

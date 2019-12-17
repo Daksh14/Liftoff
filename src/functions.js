@@ -10,12 +10,12 @@ const moment = require('moment')
 /**
  * Discord js instance
  */
-const Discord = require('discord.js');
+const Discord = require('discord.js')
 
 const filter = (role) => { return role.replace("<","").replace(">","").replace("@","").replace("&","").replace("#","") }
 const getRole = (message) => message.match(roleRegex)
 const getEmbeds = (launches) => {
-    let embed = new Discord.RichEmbed();
+    let embed = new Discord.RichEmbed()
     embed.setTitle(launches.name)
     embed.setDescription(launches.missions[0].description.substring(0,100) + "...")
     embed.setImage(launches.rocket.imageURL)
@@ -29,7 +29,7 @@ const getEmbeds = (launches) => {
     return embed
 }
 const helpEmbeds = () => {
-    let embed = new Discord.RichEmbed();
+    let embed = new Discord.RichEmbed()
     embed.setTitle("Commands")
     embed.addField("**;launchlist**", "Shows a list of 10 upcoming launches")
     embed.addField("**;nextlaunch**", "Returns a single but most near launch")
@@ -48,8 +48,8 @@ const getIds = (serverID, db, callback) => {
             let filteredID = filter(roleID)
             let filteredChannelId = filter(channelUpdateId)
             callback(filteredID, filteredChannelId, roleID)
-        });
-    });
+        })
+    })
 }
 const checkIfEventChannelExists = (serverID, db, callback) => {
     db.serialize(function() {
