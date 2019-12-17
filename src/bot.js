@@ -121,7 +121,6 @@ let interval = setInterval(() => {
 
 bot.on('message', msg => {
     let message = msg.content
-    console.log(message)
     let channelID = msg.channel
     let serverID = msg.guild.id
     if (!message.includes(";!")) {
