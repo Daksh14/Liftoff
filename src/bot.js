@@ -1,11 +1,8 @@
 /**
- *  Liftoff!. This bot tells about new launches and
- *  updates them in your discord server
- *  It checks for recent launches and pings
- *  you if any launch is near.
- *  The bot was intially created because of some issues
- *  with the OKOTO bot for our Aerospace Eng. server.
- *  Server invite-link: https://discord.gg/dt4zf6g
+ *  Liftoff!. This bot tells about new launches and updates them in your discord server
+ *  It checks for recent launches and pings you if any launch is near.
+ *  The bot was intially created because of some issues with the OKOTO bot for our
+ *  Aerospace Eng. server. Server invite-link: https://discord.gg/dt4zf6g
  */
 const Discord = require('discord.js')
 const bot = new Discord.Client()
@@ -55,8 +52,8 @@ app.get("/", (request, response) => {
   response.sendStatus(200)
 })
 /**
- * Keep on send requests to our bot's domain just to
- * keep it alive :)
+ * Keep on sending requests to our bot's domain just to
+ * keep it alive
  */
 setInterval(() => {
   http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`)
@@ -97,7 +94,6 @@ let interval = setInterval(() => {
                 // The "one day left" event ping is now postponed as
                 // there can be many launches in a day and this
                 // can become spamy
-                console.log(s)
                 if (s == "in an hour") {
                     Array.from(bot.guilds).forEach(val => {
                         try {
@@ -175,6 +171,9 @@ bot.on('message', msg => {
     } else {
         if (message.includes(";!register")) {
             let role = fun.getRole(message)
+            /**
+             *  Check if the message is in a correct format
+             */
             if (!role[0].includes("@") || !role[0].includes("&") || !role[1].includes("#") || role[1].includes("!") || role[0].includes("!")) {
                 let embed = new Discord.RichEmbed()
                 embed.setTitle("Event role and channel")
@@ -183,20 +182,17 @@ bot.on('message', msg => {
             } else {
                 let channelregID = fun.filter(role[1])
                 let channelName = msg.guild.channels.find(ch => ch.id === channelregID).name
+                /**
+                 * Check if the server exists. If it does not then create a new entry in the database
+                 */
                 let response = fun.checkIfEventChannelExists(serverID, db, (state, row) => {
                     if (state === "new") {
-                        db.serialize(() => {
-                            db.run("INSERT INTO events (server_id, role_id, channel_Id) VALUES (?1, ?2, ?3)" , {
-                                1: serverID,
-                                2: role[0],
-                                3: role[1]
-                            }, (err) => {
-                                if (err) {
-                                    console.error(err.message)
-                                    msg.channel.send("There's a problem, the author is informed")
-                                }
+                        fun.addAField(serverID, db, role, (res) => {
+                            if (res == "problem") {
+                                msg.channel.send("There's a problem, the author is informed")
+                            }else if (res == "done") {
                                 msg.channel.send("Role successfully set")
-                            })
+                            }
                         })
                     } else if (state === "exists") {
                         if (row.role_id == role[0] && row.channel_id == role[1]) {

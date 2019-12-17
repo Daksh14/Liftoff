@@ -11,9 +11,23 @@ const moment = require('moment')
  * Discord js instance
  */
 const Discord = require('discord.js')
-
+/**
+ * filters the role/channel ids to their num format
+ * @param  {String} id String
+ * @return {String} Fitered string
+ */
 const filter = (role) => { return role.replace("<","").replace(">","").replace("@","").replace("&","").replace("#","") }
+/**
+ * Match the roleRegex to extract ids from message string
+ * @param  {String} message The message string
+ * @return {Array} Array of roles, these roles needs to be filtered first to be used in searching the guild object for any reason
+ */
 const getRole = (message) => message.match(roleRegex)
+/**
+ * Get embeds for ;nextlaunch
+ * @param  {Launch} launches launch-lib instance
+ * @return {embed} embed object
+ */
 const getEmbeds = (launches) => {
     let embed = new Discord.RichEmbed()
     embed.setTitle(launches.name)
@@ -28,6 +42,10 @@ const getEmbeds = (launches) => {
 
     return embed
 }
+/**
+ * Get embeds for ;help
+ * @return {embed} embed object
+ */
 const helpEmbeds = () => {
     let embed = new Discord.RichEmbed()
     embed.setTitle("Commands")
@@ -37,6 +55,13 @@ const helpEmbeds = () => {
     embed.addField("**;!register <rolename> <channel-name>**", "Use this to register a role that should be pinged when a launch is near. \n e.g `;!register @events-alert #general`")
     return embed
 }
+/**
+ * Get role-id and channel-id for a server in the SQL-lite database
+ * @param  {string} serverID Id of the server of which we want the channel-id or role-id
+ * @param  {sqlite3} db sqlite3 db instance
+ * @param  {callback} callback callback as soon as we get fetch the ids
+ * @return {null}
+ */
 const getIds = (serverID, db, callback) => {
     db.serialize(() => {
         db.each("SELECT * FROM events WHERE server_id = ?", [ serverID ], (err, row) => {
@@ -51,6 +76,13 @@ const getIds = (serverID, db, callback) => {
         })
     })
 }
+/**
+ * Check if the user has submitted a channel for events
+ * @param  {string} serverID Id of the server of which we want the channel-id or role-id
+ * @param  {sqlite3} db sqlite3 db instance
+ * @param  {callback} callback callback as soon as we get fetch the ids
+ * @return {null}
+ */
 const checkIfEventChannelExists = (serverID, db, callback) => {
     db.serialize(function() {
         db.get("SELECT * FROM events WHERE server_id = ?", [serverID], (err, row) => {
@@ -59,14 +91,30 @@ const checkIfEventChannelExists = (serverID, db, callback) => {
         })
     })
 }
+/**
+ * Update the channel-id for events of a given serverID
+ * @param  {string} serverID Id of the server of which we want the channel-id or role-id
+ * @param  {sqlite3} db sqlite3 db instance
+ * @param  {Array} [roles] Array of role-id and channel-id
+ * @param  {callback} callback callback as soon as we get fetch the ids
+ * @return {null}
+ */
 const changeChannel = (serverID, db, roles, callback) => {
     db.serialize(function() {
         db.run("UPDATE events SET channel_id = ? WHERE server_id = ?", [roles[1], serverID], (err, row) => {
             if (err) { console.log(err) }
-            if (row) { callback() } else { callback() }
+            callback()
         })
     })
 }
+/**
+ * Update the role-id for events of a given serverID
+ * @param  {string} serverID Id of the server of which we want the channel-id or role-id
+ * @param  {sqlite3} db sqlite3 db instance
+ * @param  {Array} [roles] Array of role-id and channel-id
+ * @param  {callback} callback callback as soon as we get fetch the ids
+ * @return {null}
+ */
 const changeRole = (serverID, db, roles, callback) => {
     db.serialize(function() {
         db.run("UPDATE events SET role_id = ? WHERE server_id = ?", [roles[0], serverID], (err, row) => {
@@ -75,11 +123,42 @@ const changeRole = (serverID, db, roles, callback) => {
         })
     })
 }
+/**
+ * Update the channel-id and the role-id for events of a given serverID
+ * @param  {string} serverID Id of the server of which we want the channel-id or role-id
+ * @param  {sqlite3} db sqlite3 db instance
+ * @param  {Array} [roles] Array of role-id and channel-id
+ * @param  {callback} callback callback as soon as we get fetch the ids
+ * @return {null}
+ */
 const changeRoleAndChannel = (serverID, db, roles, callback) => {
     db.serialize(function() {
         db.run("UPDATE events SET role_id = ? AND channel_id = ? WHERE server_id = ?", [roles[0], roles[1], serverID], (err, row) => {
             if (err) { console.log(err) }
             if (row) { callback() } else { callback() }
+        })
+    })
+}
+/**
+ * Push a channel-id and the role-id in the database for events of a given serverID
+ * @param  {string} serverID Id of the server of which we want the channel-id or role-id
+ * @param  {sqlite3} db sqlite3 db instance
+ * @param  {Array} [roles] Array of role-id and channel-id
+ * @param  {callback} callback callback as soon as we get fetch the ids
+ * @return {null}
+ */
+const addAField = (serverID, db, role, callback) => {
+    db.serialize(() => {
+        db.run("INSERT INTO events (server_id, role_id, channel_Id) VALUES (?1, ?2, ?3)" , {
+            1: serverID,
+            2: role[0],
+            3: role[1]
+        }, (err) => {
+            if (err) {
+                console.error(err.message)
+                callback("problem")
+            }
+            callback("done")
         })
     })
 }
@@ -95,3 +174,4 @@ exports.checkIfEventChannelExists = checkIfEventChannelExists
 exports.changeChannel = changeChannel
 exports.changeRole = changeRole
 exports.changeRoleAndChannel = changeRoleAndChannel
+exports.addAField = addAField
