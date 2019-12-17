@@ -3,13 +3,13 @@
   <img src="https://cdn.glitch.com/project-avatar/b258934c-611d-4f93-ade5-432f5aff3851.png?1575996506463">
 </p>
 Liftoff is a discord bot that tells you about recent launches happening all over the world that are available on the 
-https://launchlibrary.net API. This bot checks for recent launches and pings a given role in a already specified channel
+https://launchlibrary.net API. This bot checks for recent launches and pings a given role in an already specified channel
 
 # Setup bot in your server
 |  command 	|  action 	|   	|  	|   	|
 |:-:	|:-:	|:-:	|---	|---	|
 |  `;launchlist` 	| `returns 10 recent launches`  	|   	|   	|   	|
-|   `help`	|  `returns the command help list` 	|   	|   	|   	|
+|   `;help`	|  `returns the command help list` 	|   	|   	|   	|
 |  `;!register <rolename> <channel-name>` 	|  `Register a role to ping and a channel for bot to ping in` 	|   	|   	|   	|
 
 Or do `;help` in your server in any channel. 
