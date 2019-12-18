@@ -120,7 +120,7 @@ const changeRole = (serverID, db, roles, callback) => {
     db.serialize(function() {
         db.run("UPDATE events SET role_id = ? WHERE server_id = ?", [roles[0], serverID], (err, row) => {
             if (err) { console.log(err) }
-            if (row) { callback() } else { callback() }
+            callback() 
         })
     })
 }
@@ -136,7 +136,7 @@ const changeRoleAndChannel = (serverID, db, roles, callback) => {
     db.serialize(function() {
         db.run("UPDATE events SET role_id = ? AND channel_id = ? WHERE server_id = ?", [roles[0], roles[1], serverID], (err, row) => {
             if (err) { console.log(err) }
-            if (row) { callback() } else { callback() }
+            callback()
         })
     })
 }
