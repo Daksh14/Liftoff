@@ -11,9 +11,9 @@ https://launchlibrary.net API. This bot checks for recent launches and pings a g
 |  `;launch-list` 	| `returns 10 recent launches`  	|   	|   	|   	|
 |   `;help-liftoff`	|  `returns the command help list` 	|   	|   	|   	|
 |  `;!register <rolename> <channel-name>` 	|  `Register a role to ping and a channel for bot to ping in` 	|   	|   	|   	|
-|  `;next-launch` 	| `returns the most recent launche`  	|   	|   	|   	|
+|  `;next-launch` 	| `returns the most recent launch`  	|   	|   	|   	|
 
-Or do `;help` in your server in any channel.
+Or do `;help-liftoff` in your server in any channel.
 
 Add this bot in your server via [this link](https://discordapp.com/api/oauth2/authorize?client_id=646973093117558794&permissions=268561408&scope=bot)
 
