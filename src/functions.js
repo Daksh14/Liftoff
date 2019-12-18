@@ -53,7 +53,7 @@ const helpEmbeds = () => {
     embed.addField("**;next-launch**", "Returns a single but most near launch")
     embed.addField("**;event-role**", "Shows the role that is registered for pinging when a launch is near")
     embed.addField("**;!ping <rolename>**", "Pings the event role.")
-    embed.addField("**;!register <rolename> <channel-name>**", "Use this to register a role that should be pinged when a launch is near. \n e.g `;!register @events-alert #general`")
+    embed.addField("**;!register <@rolename> <#channel-name>**", "Use this to register a role that should be pinged when a launch is near. \n e.g `;!register @events-alert #general`")
     return embed
 }
 /**
@@ -120,7 +120,7 @@ const changeRole = (serverID, db, roles, callback) => {
     db.serialize(function() {
         db.run("UPDATE events SET role_id = ? WHERE server_id = ?", [roles[0], serverID], (err, row) => {
             if (err) { console.log(err) }
-            callback() 
+            callback()
         })
     })
 }
