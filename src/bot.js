@@ -23,7 +23,7 @@ const moment = require('moment')
  * and the SQLite3 database location
  */
 const sqlite3 = require('sqlite3').verbose()
-const dbFile = 'liftoff.db'
+const dbFile = './liftoff.db'
 let db = new sqlite3.Database(dbFile, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
     if (err) { console.error(err.message) }
     db.serialize(function() {
@@ -52,8 +52,8 @@ app.get("/", (request, response) => {
   response.sendStatus(200)
 })
 /**
- * Keep on sending requests to our bot's domain just to
- * keep it alive
+ * Keep on send requests to our bot's domain just to
+ * keep it alive :)
  */
 setInterval(() => {
   http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`)
@@ -125,7 +125,7 @@ bot.on('message', msg => {
     let serverID = msg.guild.id
     if (!message.includes(";!")) {
         switch(message) {
-            case ";nextlaunch":
+            case ";next-launch":
                 launchLib.get('getLaunches', '1').then(data => {
                     let launches = data.launches[0]
                     let embed = fun.getEmbeds(launches)
@@ -135,7 +135,7 @@ bot.on('message', msg => {
                     msg.channel.send("There's a problem, the author is informed")
                 })
             break
-            case ";launchlist":
+            case ";launch-list":
                 let embed = new Discord.RichEmbed()
                 launchLib.get('getLaunches', '10').then(data => {
                     let launchesArr = data.launches.forEach((launches) => {
@@ -151,7 +151,7 @@ bot.on('message', msg => {
                     msg.channel.send("There's a problem, the author is informed")
                 })
             break
-            case ";eventrole":
+            case ";event-role":
                 fun.getIds(serverID, db,  (filteredID, filteredChannelId) => {
                     let embed = new Discord.RichEmbed()
                     embed.setTitle("Roles to ping when launches are near")
@@ -161,7 +161,7 @@ bot.on('message', msg => {
                     msg.channel.send(embed)
                 })
             break
-            case ";help":
+            case ";help-liftoff":
                 let helpEmbed = fun.helpEmbeds()
                 helpEmbed.setTitle("Command list")
                 msg.channel.send(helpEmbed)
@@ -222,6 +222,35 @@ bot.on('message', msg => {
                         }
                     }
                 })
+            }
+        }
+      if (message.includes(";!ping")) {
+            let perms = msg.member.permissions
+            if (perms.has("ADMINISTRATOR")) {
+                let role = message.replace(";!ping", "").replace(/^\s+/g, '')
+                if (role.includes("@") || role.includes("&") || role.includes("!")) {
+                    let embed = new Discord.RichEmbed()
+                    embed.setTitle("Event role and channel")
+                    embed.setDescription("Bad synatx, the correct synatx is : `;!ping <role-name>.` Don't mention the role")
+                    msg.channel.send(embed)
+                } else {
+                    let roleInstance = msg.guild.roles.find(roleE => roleE.name == role)
+                    if (roleInstance) {
+                        roleInstance.setMentionable(true, 'Role needs to be pinged')
+                        .then(updated => {
+                          msg.channel.send("<@&"+roleInstance.id+">")
+                          setTimeout(() => roleInstance.setMentionable(false, "Pinging done"), 100)
+                        })
+                        .catch(console.error);
+                    } else {
+                        let embed = new Discord.RichEmbed()
+                        embed.setTitle("Event role and channel")
+                        embed.setDescription("Role doesn't exists :/")
+                        msg.channel.send(embed)
+                    }
+                }
+            } else {
+                msg.channel.send("Insufficient permissions")
             }
         }
     }

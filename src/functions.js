@@ -43,15 +43,16 @@ const getEmbeds = (launches) => {
     return embed
 }
 /**
- * Get embeds for ;help
+ * Get embeds for ;help-liftoff
  * @return {embed} embed object
  */
 const helpEmbeds = () => {
     let embed = new Discord.RichEmbed()
     embed.setTitle("Commands")
-    embed.addField("**;launchlist**", "Shows a list of 10 upcoming launches")
-    embed.addField("**;nextlaunch**", "Returns a single but most near launch")
-    embed.addField("**;eventrole**", "Shows the role that is registered for pinging when a launch is near")
+    embed.addField("**;launch-list**", "Shows a list of 10 upcoming launches")
+    embed.addField("**;next-launch**", "Returns a single but most near launch")
+    embed.addField("**;event-role**", "Shows the role that is registered for pinging when a launch is near")
+    embed.addField("**;!ping <rolename>**", "Pings the event role.")
     embed.addField("**;!register <rolename> <channel-name>**", "Use this to register a role that should be pinged when a launch is near. \n e.g `;!register @events-alert #general`")
     return embed
 }
