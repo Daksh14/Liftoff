@@ -155,8 +155,8 @@ bot.on('message', msg => {
                 fun.getIds(serverID, db,  (filteredID, filteredChannelId) => {
                     let embed = new Discord.RichEmbed()
                     embed.setTitle("Roles to ping when launches are near")
-                    let channelName = msg.guild.channels.find(ch => ch.id === filteredChannelId).name
-                    let roleName = msg.guild.roles.find(ch => ch.id === filteredID).name
+                    let channelName = msg.guild.channels.find(ch => ch.id == filteredChannelId).name
+                    let roleName = msg.guild.roles.find(ch => ch.id == filteredID).name
                     embed.setDescription("Role name: " + roleName +". \n Event-Channel-name: " + channelName)
                     msg.channel.send(embed)
                 })
@@ -182,12 +182,12 @@ bot.on('message', msg => {
                     msg.channel.send(embed)
                 } else {
                     let channelregID = fun.filter(role[1])
-                    let channelName = msg.guild.channels.find(ch => ch.id === channelregID).name
+                    let channelName = msg.guild.channels.find(ch => ch.id == channelregID).name
                     /**
                      * Check if the server exists. If it does not then create a new entry in the database
                      */
                     let response = fun.checkIfEventChannelExists(serverID, db, (state, row) => {
-                        if (state === "new") {
+                        if (state == "new") {
                             fun.addAField(serverID, db, role, (res) => {
                                 if (res == "problem") {
                                     msg.channel.send("There's a problem, the author is informed")
@@ -195,7 +195,7 @@ bot.on('message', msg => {
                                     msg.channel.send("Role successfully set")
                                 }
                             })
-                        } else if (state === "exists") {
+                        } else if (state == "exists") {
                             if (row.role_id == role[0] && row.channel_id == role[1]) {
                                 let embed = new Discord.RichEmbed()
                                 embed.setTitle("Event role and channel")
