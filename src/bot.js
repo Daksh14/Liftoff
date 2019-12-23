@@ -106,7 +106,7 @@ let interval = setInterval(() => {
                                             bot.channels.get(filteredChannelId).send(role + " Launch incoming")
                                             setTimeout(() => roleInstance.setMentionable(false, "Pinging done"), 200)
                                         })
-                                        .catch(console.error);
+                                        .catch(console.error)
                                     }
                                     let embed = fun.getEmbeds(launchesInfo)
                                     bot.channels.get(filteredChannelId).send(embed)
@@ -257,7 +257,7 @@ bot.on('message', msg => {
                           msg.channel.send("<@&"+roleInstance.id+">")
                           setTimeout(() => roleInstance.setMentionable(false, "Pinging done"), 200)
                         })
-                        .catch(console.error);
+                        .catch(console.error)
                     } else {
                         let embed = new Discord.RichEmbed()
                         embed.setTitle("Event role and channel")
@@ -281,7 +281,7 @@ bot.on('ready', () => {
       counter = true
       bot.user.setActivity("soviet wave", {type: "LISTENING"})
     }
-  },10000)
+  }, 35000)
 
   console.log(`Logged in`)
 })
