@@ -5,6 +5,7 @@
     "main": "bot.js",
     "author": "weegee",
     "dependencies": {
+        "discord-rich-presence": "0.0.8",
         "discord.js": "^11.5.1",
         "ejs": "^3.0.1",
         "express": "^4.17.1",

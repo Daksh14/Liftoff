@@ -10,14 +10,11 @@ const bot = new Discord.Client()
  * Contains the bot's secret
  */
 const auth = process.env.TOKEN
-bot.on('ready', () => {
-  console.log(`Logged in`)
-})
-bot.login(auth)
 /**
  * Moment library instance for working with dates
  */
 const moment = require('moment')
+
 /**
  * SQLite3 database API instance. Using this for storing roles
  * and the SQLite3 database location
@@ -274,4 +271,18 @@ bot.on('message', msg => {
         }
     }
 })
+bot.on('ready', () => {
+  let counter = true
+  setInterval(() => {
+    if (counter) {
+      counter = false
+      bot.user.setActivity(";help-liftoff", {type: "LISTENING"})
+    }else{
+      counter = true
+      bot.user.setActivity("soviet wave", {type: "LISTENING"})
+    }
+  },10000)
 
+  console.log(`Logged in`)
+})
+bot.login(auth)
