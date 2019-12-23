@@ -94,15 +94,24 @@ let interval = setInterval(() => {
                 // The "one day left" event ping is now postponed as
                 // there can be many launches in a day and this
                 // can become spamy
-                if (s === "in an hour") {
+                if (s == "in an hour") {
                     Array.from(bot.guilds).forEach(val => {
                         try {
                             let id = Array.from(val)[0]
-                            if (!literations.filter(e => e.server == id && e.launch === launchesInfo.name && e.time === launchesInfo.windowstart && e.timeleft === s).length > 0) {
+                            if (!literations.filter(e => e.server == id && e.launch == launchesInfo.name && e.time == launchesInfo.windowstart && e.timeleft == s).length > 0) {
                                 literations.push({server: id, launch: launchesInfo.name, time: launchesInfo.windowstart, timeleft: s})
                                 fun.getIds(id, db,  (filteredID, filteredChannelId, role) => {
+                                    let roleInstance = bot.guilds.get(id).roles.find(roleE => roleE.id == filteredID)
+                                    console.log()
+                                    if (roleInstance) {
+                                        roleInstance.setMentionable(true, 'Role needs to be pinged')
+                                        .then(updated => {
+                                            bot.channels.get(filteredChannelId).send(role + " Launch incoming")
+                                            setTimeout(() => roleInstance.setMentionable(false, "Pinging done"), 200)
+                                        })
+                                        .catch(console.error);
+                                    }
                                     let embed = fun.getEmbeds(launchesInfo)
-                                    bot.channels.get(filteredChannelId).send(role + " Launch incoming")
                                     bot.channels.get(filteredChannelId).send(embed)
                                 })
                             }
@@ -139,7 +148,7 @@ bot.on('message', msg => {
                 let embed = new Discord.RichEmbed()
                 launchLib.get('getLaunches', '10').then(data => {
                     let launchesArr = data.launches.forEach((launches) => {
-                        let vid = typeof launches.vidURLs[0] === "undefined" ? "Not available" : launches.vidURLs[0]
+                        let vid = typeof launches.vidURLs[0] == "undefined" ? "Not available" : launches.vidURLs[0]
                         embed.addField(launches.name, "**Launch Time**: " + launches.windowstart + "; " + moment(launches.windowstart).fromNow() + "\n **Organisation**: " + launches.lsp.name + "\n **Location**: " + launches.location.name + " \n **Country**: " + launches.lsp.countryCode + "\n **Live**: " + vid)
                     })
                     embed.setTitle("Launch data")
@@ -156,9 +165,14 @@ bot.on('message', msg => {
                     let embed = new Discord.RichEmbed()
                     embed.setTitle("Roles to ping when launches are near")
                     let channelName = msg.guild.channels.find(ch => ch.id == filteredChannelId).name
-                    let roleName = msg.guild.roles.find(ch => ch.id == filteredID).name
-                    embed.setDescription("Role name: " + roleName +". \n Event-Channel-name: " + channelName)
-                    msg.channel.send(embed)
+                    let roleName = msg.guild.roles.find(ch => ch.id == filteredID)
+                    if (roleName) {
+                      embed.setDescription("Role name: " + roleName.name +". \n Event-Channel-name: " + channelName)
+                      msg.channel.send(embed)
+                    }else {
+                      embed.setDescription("There has been a problem in registering your roleName. Please try again.")
+                      msg.channel.send(embed)
+                    }
                 })
             break
             case ";help-liftoff":
@@ -187,28 +201,28 @@ bot.on('message', msg => {
                      * Check if the server exists. If it does not then create a new entry in the database
                      */
                     let response = fun.checkIfEventChannelExists(serverID, db, (state, row) => {
-                        if (state === "new") {
+                        if (state == "new") {
                             fun.addAField(serverID, db, role, (res) => {
-                                if (res === "problem") {
+                                if (res == "problem") {
                                     msg.channel.send("There's a problem, the author is informed")
                                 }else if (res == "done") {
                                     msg.channel.send("Role successfully set")
                                 }
                             })
-                        } else if (state === "exists") {
+                        } else if (state == "exists") {
                             if (row.role_id == role[0] && row.channel_id == role[1]) {
                                 let embed = new Discord.RichEmbed()
                                 embed.setTitle("Event role and channel")
                                 embed.setDescription("This role already exists for channel " + role[1])
                                 msg.channel.send(embed)
                             }else{
-                                if (row.role_id === role[0]) {
+                                if (row.role_id == role[0]) {
                                     let embed = new Discord.RichEmbed()
                                     embed.setTitle("Event role and channel")
                                     embed.setDescription("Changing channels")
                                     msg.channel.send(embed)
                                     fun.changeChannel(serverID, db, role, () => msg.channel.send("Done"))
-                                } else if (row.channel_id === role[1]) {
+                                } else if (row.channel_id == role[1]) {
                                     let embed = new Discord.RichEmbed()
                                     embed.setTitle("Event role and channel")
                                     embed.setDescription("Changing roles")
@@ -239,12 +253,12 @@ bot.on('message', msg => {
                     embed.setDescription("Bad synatx, the correct synatx is : `;!ping <role-name>.` Don't mention the role")
                     msg.channel.send(embed)
                 } else {
-                    let roleInstance = msg.guild.roles.find(roleE => roleE.name === role)
+                    let roleInstance = msg.guild.roles.find(roleE => roleE.name == role)
                     if (roleInstance) {
                         roleInstance.setMentionable(true, 'Role needs to be pinged')
                         .then(updated => {
                           msg.channel.send("<@&"+roleInstance.id+">")
-                          setTimeout(() => roleInstance.setMentionable(false, "Pinging done"), 100)
+                          setTimeout(() => roleInstance.setMentionable(false, "Pinging done"), 200)
                         })
                         .catch(console.error);
                     } else {
@@ -260,3 +274,4 @@ bot.on('message', msg => {
         }
     }
 })
+

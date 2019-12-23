@@ -38,8 +38,11 @@ const getEmbeds = (launches) => {
     embed.addField("**Location**", launches.location.name)
     embed.addField("**Organisation**", launches.lsp.name)
     embed.addField("**Country Code**", launches.lsp.countryCode)
-    embed.addField("**Links**",  "Company-wiki: " + launches.lsp.wikiURL + "\n" + "Video links " + launches.vidURLs[0])
-
+    if (launches.vidURLs[0]) {
+        embed.addField("**Links**",  "Company-wiki: " + launches.lsp.wikiURL + "\n" + "Video links: " + launches.vidURLs[0])
+    }else {
+        embed.addField("**Links**",  "Company-wiki: " + launches.lsp.wikiURL + "\n" + "Video links: Not available")
+    }
     return embed
 }
 /**
@@ -136,6 +139,7 @@ const changeRoleAndChannel = (serverID, db, roles, callback) => {
     db.serialize(function() {
         db.run("UPDATE events SET role_id = ? AND channel_id = ? WHERE server_id = ?", [roles[0], roles[1], serverID], (err, row) => {
             if (err) { console.log(err) }
+            console.log(row)
             callback()
         })
     })
