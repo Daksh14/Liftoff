@@ -91,7 +91,7 @@ let interval = setInterval(() => {
                 // The "one day left" event ping is now postponed as
                 // there can be many launches in a day and this
                 // can become spamy
-                if (s == "in an hour") {
+                if (s == "in 15 minutes") {
                     Array.from(bot.guilds).forEach(val => {
                         try {
                             let id = Array.from(val)[0]
