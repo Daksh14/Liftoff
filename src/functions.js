@@ -29,12 +29,17 @@ const getRole = (message) => message.match(roleRegex)
  * @return {embed} embed object
  */
 const getEmbeds = (launches) => {
+    let timeLeftString = moment(new Date(launches.windowstart)).fromNow() + ", " + moment.duration(moment(new Date(launches.windowstart), "h:mm:s").utc().diff(moment(new Date(), "h:mm:s"))).hours() + " hours"
     let embed = new Discord.RichEmbed()
     embed.setTitle(launches.name)
-    embed.setDescription(launches.missions[0].description.substring(0,100) + "...")
+    if (launches.missions[0].description.length > 100) {
+        embed.setDescription(launches.missions[0].description.substring(0,100) + "...[read more]() ")
+    }else {
+        embed.setDescription(launches.missions[0].description)
+    }
     embed.setImage(launches.rocket.imageURL)
     embed.addField("**Launch Time**", launches.windowstart)
-    embed.addField("**Time left**", moment(launches.windowstart).fromNow())
+    embed.addField("**Time left**", timeLeftString)
     embed.addField("**Location**", launches.location.name)
     embed.addField("**Organisation**", launches.lsp.name)
     embed.addField("**Country Code**", launches.lsp.countryCode)
@@ -180,3 +185,4 @@ exports.changeChannel = changeChannel
 exports.changeRole = changeRole
 exports.changeRoleAndChannel = changeRoleAndChannel
 exports.addAField = addAField
+

@@ -82,12 +82,10 @@ let literations = []
  * Then it notifies the user/role about it
  */
 let interval = setInterval(() => {
-    let now = moment().format('MMMM Do YYYY, h:mm:ss a')
     launchLib.get('getLaunches', '5').then(data => {
         data.launches.forEach((launchesInfo) => {
             try {
-                let then = moment(launchesInfo.windowstart)
-                let s = moment(launchesInfo.windowstart).fromNow()
+                let s = moment(new Date(launchesInfo.windowstart)).fromNow()
                 // The "one day left" event ping is now postponed as
                 // there can be many launches in a day and this
                 // can become spamy
@@ -146,7 +144,7 @@ bot.on('message', msg => {
                 launchLib.get('getLaunches', '10').then(data => {
                     let launchesArr = data.launches.forEach((launches) => {
                         let vid = typeof launches.vidURLs[0] == "undefined" ? "Not available" : launches.vidURLs[0]
-                        embed.addField(launches.name, "**Launch Time**: " + launches.windowstart + "; " + moment(launches.windowstart).fromNow() + "\n **Organisation**: " + launches.lsp.name + "\n **Location**: " + launches.location.name + " \n **Country**: " + launches.lsp.countryCode + "\n **Live**: " + vid)
+                        embed.addField(launches.name, "**Launch Time**: " + launches.windowstart + "; " + moment(new Date(launches.windowstart)).fromNow() + ", " + moment.duration(moment(new Date(launches.windowstart), "h:mm:s").utc().diff(moment(new Date(), "h:mm:s"))).hours() + " hours" + "\n **Organisation**: " + launches.lsp.name + "\n **Location**: " + launches.location.name + " \n **Country**: " + launches.lsp.countryCode + "\n **Live**: " + vid)
                     })
                     embed.setTitle("Launch data")
                     embed.setDescription("Upcoming 10 launches")
