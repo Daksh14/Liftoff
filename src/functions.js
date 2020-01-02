@@ -33,7 +33,7 @@ const getEmbeds = (launches) => {
     let embed = new Discord.RichEmbed()
     embed.setTitle(launches.name)
     if (launches.missions[0].description.length > 100) {
-        embed.setDescription(launches.missions[0].description.substring(0,100) + "...[read more]() ")
+        embed.setDescription(launches.missions[0].description.substring(0,100) + "...[read more](https://launchlibrary.net/) ")
     }else {
         embed.setDescription(launches.missions[0].description)
     }
