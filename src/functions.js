@@ -32,10 +32,14 @@ const getEmbeds = (launches) => {
     let timeLeftString = moment(new Date(launches.windowstart)).fromNow() + ", " + moment.duration(moment(new Date(launches.windowstart), "h:mm:s").utc().diff(moment(new Date(), "h:mm:s"))).hours() + " hours"
     let embed = new Discord.RichEmbed()
     embed.setTitle(launches.name)
-    if (launches.missions[0].description.length > 100) {
-        embed.setDescription(launches.missions[0].description.substring(0,100) + "...[read more](https://launchlibrary.net/) ")
+    if (launches.missions[0]) {
+        if (launches.missions[0].description.length > 100) {
+            embed.setDescription(launches.missions[0].description.substring(0,100) + "...[read more](https://launchlibrary.net/) ")
+        }else {
+            embed.setDescription(launches.missions[0].description)
+        }
     }else {
-        embed.setDescription(launches.missions[0].description)
+      embed.setDescription("_no description available_")
     }
     embed.setImage(launches.rocket.imageURL)
     embed.addField("**Launch Time**", launches.windowstart)
