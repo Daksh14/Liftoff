@@ -39,7 +39,7 @@ const getEmbeds = (launches) => {
             embed.setDescription(launches.missions[0].description)
         }
     }else {
-      embed.setDescription("_no description available_")
+        embed.setDescription("_no description available_")
     }
     embed.setImage(launches.rocket.imageURL)
     embed.addField("**Launch Time**", launches.windowstart)
