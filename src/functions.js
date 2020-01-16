@@ -29,12 +29,8 @@ const getRole = (message) => message.match(roleRegex)
  * @return {embed} embed object
  */
 const getEmbeds = (launches) => {
-    let timeLeftString
-    if (moment(new Date(launches.windowstart)).fromNow().includes("hours")) {
-      timeLeftString = moment(new Date(launches.windowstart)).fromNow()
-    }else {
-      timeLeftString = moment(new Date(launches.windowstart)).fromNow() + ", " + moment.duration(moment(new Date(launches.windowstart), "h:mm:s").utc().diff(moment(new Date(), "h:mm:s"))).hours() + " hours"
-    }
+    const duration = moment.duration(moment(new Date(launches.windowstart), "h:mm:s").utc().diff(moment(new Date(), "h:mm:s")))
+    const timeLeftString = duration.days() + " days " + duration.hours() + " hours " + duration.minutes() + " minutes"
     let embed = new Discord.RichEmbed()
     embed.setTitle(launches.name)
     if (launches.missions[0]) {
@@ -46,16 +42,16 @@ const getEmbeds = (launches) => {
     }else {
       embed.setDescription("_no description available_")
     }
-    embed.setImage(launches.rocket.imageURL)
+    embed.setThumbnail(launches.rocket.imageURL)
     embed.addField("**Launch Time**", launches.windowstart)
     embed.addField("**Time left**", timeLeftString)
     embed.addField("**Location**", launches.location.name)
     embed.addField("**Organisation**", launches.lsp.name)
     embed.addField("**Country Code**", launches.lsp.countryCode)
     if (launches.vidURLs[0]) {
-        embed.addField("**Links**",  "Company-wiki: " + launches.lsp.wikiURL + "\n" + "Video links: " + launches.vidURLs[0])
+        embed.addField("**Links**",  "Source: http://www.launchlibrary.net/ \n Company-wiki: " + launches.lsp.wikiURL + "\n" + "Video links: " + launches.vidURLs[0])
     }else {
-        embed.addField("**Links**",  "Company-wiki: " + launches.lsp.wikiURL + "\n" + "Video links: Not available")
+        embed.addField("**Links**",  "Source: http://www.launchlibrary.net/ \n Company-wiki: " + launches.lsp.wikiURL + "\n" + "Video links: Not available")
     }
     return embed
 }
