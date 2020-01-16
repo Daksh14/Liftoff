@@ -29,7 +29,12 @@ const getRole = (message) => message.match(roleRegex)
  * @return {embed} embed object
  */
 const getEmbeds = (launches) => {
-    let timeLeftString = moment(new Date(launches.windowstart)).fromNow() + ", " + moment.duration(moment(new Date(launches.windowstart), "h:mm:s").utc().diff(moment(new Date(), "h:mm:s"))).hours() + " hours"
+    let timeLeftString
+    if (moment(new Date(launches.windowstart)).fromNow().includes("hours")) {
+      timeLeftString = moment(new Date(launches.windowstart)).fromNow()
+    }else {
+      timeLeftString = moment(new Date(launches.windowstart)).fromNow() + ", " + moment.duration(moment(new Date(launches.windowstart), "h:mm:s").utc().diff(moment(new Date(), "h:mm:s"))).hours() + " hours"
+    }
     let embed = new Discord.RichEmbed()
     embed.setTitle(launches.name)
     if (launches.missions[0]) {
@@ -39,7 +44,7 @@ const getEmbeds = (launches) => {
             embed.setDescription(launches.missions[0].description)
         }
     }else {
-        embed.setDescription("_no description available_")
+      embed.setDescription("_no description available_")
     }
     embed.setImage(launches.rocket.imageURL)
     embed.addField("**Launch Time**", launches.windowstart)
@@ -189,4 +194,3 @@ exports.changeChannel = changeChannel
 exports.changeRole = changeRole
 exports.changeRoleAndChannel = changeRoleAndChannel
 exports.addAField = addAField
-
