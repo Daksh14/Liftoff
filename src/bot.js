@@ -149,8 +149,10 @@ bot.on('message', msg => {
                 launchLib.get('getLaunches', '10').then(data => {
                     let launchesArr = data.launches.forEach((launches) => {
                         let vid = typeof launches.vidURLs[0] == "undefined" ? "Not available" : launches.vidURLs[0]
+
                         let duration = moment.duration(moment(new Date(launches.windowstart), "h:mm:s").utc().diff(moment(new Date(), "h:mm:s")))
-                        embed.addField(launches.name, "**Launch Time**: " + launches.windowstart + "; " + moment(new Date(launches.windowstart)).fromNow() + ", " + duration.hours() + " hours" + " " + duration.minutes() + " minutes" + "\n **Organisation**: " + launches.lsp.name + "\n **Location**: " + launches.location.name + " \n **Country**: " + launches.lsp.countryCode + "\n **Live**: " + vid)
+                        let timeLeftString = duration.days() + " days " + duration.hours() + " hours " + duration.minutes() + " minutes"
+                        embed.addField(launches.name, "**Launch Time**: " + launches.windowstart + "; " + timeLeftString + "\n **Organisation**: " + launches.lsp.name + "\n **Location**: " + launches.location.name + " \n **Country**: " + launches.lsp.countryCode + "\n **Live**: " + vid)
                     })
                     embed.setTitle("Launch data")
                     embed.setDescription("Upcoming 10 launches")
