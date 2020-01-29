@@ -69,6 +69,10 @@ const launchLib = new Launch()
  */
 const pingInterval = 10000
 /**
+ * The time-interval for allowing ping to be ping-able.
+ */
+const pingIntervalPing = 500
+/**
  * We'll keep the record of the launch names, if a new one arisies
  * then ping the role. If the launch name exists in the array
  * then don't ping. This is to prevent un-necessary constant pinging
@@ -102,7 +106,7 @@ let interval = setInterval(() => {
                                         roleInstance.setMentionable(true, 'Role needs to be pinged')
                                         .then(updated => {
                                             bot.channels.get(filteredChannelId).send(role + " Launch incoming")
-                                            setTimeout(() => roleInstance.setMentionable(false, "Pinging done"), 200)
+                                            setTimeout(() => roleInstance.setMentionable(false, "Pinging done"), pingIntervalPing)
                                         })
                                         .catch(console.error)
                                     }
@@ -113,6 +117,10 @@ let interval = setInterval(() => {
                         } catch (err) { console.log(err) }
                     })
                 }
+              if (s == "in 13 minutes") {
+                literations = [];
+              }
+
             }
             catch (err) {
                 console.log(err)
@@ -261,7 +269,7 @@ bot.on('message', msg => {
                         roleInstance.setMentionable(true, 'Role needs to be pinged')
                         .then(updated => {
                           msg.channel.send("<@&"+roleInstance.id+">")
-                          setTimeout(() => roleInstance.setMentionable(false, "Pinging done"), 200)
+                          setTimeout(() => roleInstance.setMentionable(false, "Pinging done"), pingIntervalPing)
                         })
                         .catch(console.error)
                     } else {
