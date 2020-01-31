@@ -71,7 +71,7 @@ const pingInterval = 10000
 /**
  * The time-interval for allowing ping to be ping-able.
  */
-const pingIntervalPing = 500
+const pingIntervalPing = 1000
 /**
  * We'll keep the record of the launch names, if a new one arisies
  * then ping the role. If the launch name exists in the array
