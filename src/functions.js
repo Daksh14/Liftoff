@@ -66,7 +66,7 @@ const helpEmbeds = () => {
     embed.addField("**;next-launch**", "Returns a single but most near launch")
     embed.addField("**;event-role**", "Shows the role that is registered for pinging when a launch is near")
     embed.addField("**;!ping <rolename>**", "Pings the event role. Mention the **ROLE NAME**. Do not ping it")
-    embed.addField("**;!ping <rolename>**", "Pings the event role. Mention the **ROLE NAME**. Do not ping it")
+    embed.addField("**;!set-pinger-role <@rolename>**", "A role that can ping the event role or do ;!ping rolename manually. Doesn't need administrative rights.")
     embed.addField("**;!register <@rolename> <#channel-name>**", "Use this to register a role that should be pinged when a launch is near. \n e.g `;!register @events-alert #general`. Be sure to ping the role here.")
     embed.addField("**JOIN THE LIFTOFF SERVER**", "https://discord.gg/w9J8suk")
     return embed
@@ -128,7 +128,7 @@ const changeChannel = (serverID, db, roles, callback) => {
  * @param  {string} serverID Id of the server of which we want the channel-id or role-id
  * @param  {sqlite3} db sqlite3 db instance
  * @param  {Array} [roles] Array of role-id and channel-id
- * @param  {callback} callback callback as soon as we get fetch the ids
+ * @param  {callback} callback
  * @return {null}
  */
 const changeRole = (serverID, db, roles, callback) => {
@@ -144,7 +144,7 @@ const changeRole = (serverID, db, roles, callback) => {
  * @param  {string} serverID Id of the server of which we want the channel-id or role-id
  * @param  {sqlite3} db sqlite3 db instance
  * @param  {Array} [roles] Array of role-id and channel-id
- * @param  {callback} callback callback as soon as we get fetch the ids
+ * @param  {callback} callback
  * @return {null}
  */
 const checkPingRole = (serverID, db, roles, callback) => {
@@ -175,7 +175,7 @@ const checkPingRoleServerEntry = (serverID, db, callback) => {
  * @param  {string} serverID Id of the server of which we want the channel-id or role-id
  * @param  {sqlite3} db sqlite3 db instance
  * @param  {Array} [roles] Array of role-id and channel-id
- * @param  {callback} callback callback as soon as we get fetch the ids
+ * @param  {callback} callback
  * @return {null}
  */
 const makeNewPingRole = (serverID, db, roles, callback) => {
@@ -208,7 +208,7 @@ const makeNewPingRole = (serverID, db, roles, callback) => {
  * @param  {string} serverID Id of the server of which we want the channel-id or role-id
  * @param  {sqlite3} db sqlite3 db instance
  * @param  {Array} [roles] Array of role-id and channel-id
- * @param  {callback} callback callback as soon as we get fetch the ids
+ * @param  {callback}
  * @return {null}
  */
 const changeRoleAndChannel = (serverID, db, roles, callback) => {
