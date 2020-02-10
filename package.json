@@ -2,7 +2,7 @@
     "name": "Liftoff",
     "version": "1.0.0",
     "description": "Liftoff is a space launch info bot",
-    "main": "bot.js",
+    "main": "src/bot.js",
     "author": "weegee",
     "dependencies": {
         "discord-rich-presence": "0.0.8",

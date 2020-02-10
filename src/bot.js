@@ -23,10 +23,6 @@ const sqlite3 = require('sqlite3').verbose()
 const dbFile = './liftoff.db'
 let db = new sqlite3.Database(dbFile, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
     if (err) { console.error(err.message) }
-    db.serialize(function() {
-        db.run('CREATE TABLE IF NOT EXISTS "events" ("id" INTEGER PRIMARY KEY AUTOINCREMENT,"server_id" TEXT,"role_id" TEXT,"channel_id" TEXT);')
-        console.log("db created")
-    })
 })
 /**
  * Some native functions that are required to perfom CRUD operations and
@@ -101,7 +97,6 @@ let interval = setInterval(() => {
                                 literations.push({server: id, launch: launchesInfo.name, time: launchesInfo.windowstart, timeleft: s})
                                 fun.getIds(id, db,  (filteredID, filteredChannelId, role) => {
                                     let roleInstance = bot.guilds.get(id).roles.find(roleE => roleE.id == filteredID)
-                                    console.log()
                                     if (roleInstance) {
                                         roleInstance.setMentionable(true, 'Role needs to be pinged')
                                         .then(updated => {
@@ -120,7 +115,6 @@ let interval = setInterval(() => {
               if (s == "in 13 minutes") {
                 literations = [];
               }
-
             }
             catch (err) {
                 console.log(err)
@@ -255,29 +249,56 @@ bot.on('message', msg => {
             }
         }
         if (message.includes(";!ping")) {
-            let perms = msg.member.permissions
-            if (perms.has("ADMINISTRATOR")) {
-                let role = message.replace(";!ping", "").replace(/^\s+/g, '')
-                if (role.includes("@") || role.includes("&") || role.includes("!")) {
-                    let embed = new Discord.RichEmbed()
-                    embed.setTitle("Event role and channel")
-                    embed.setDescription("Bad synatx, the correct synatx is : `;!ping <role-name>.` Don't mention the role")
-                    msg.channel.send(embed)
-                } else {
-                    let roleInstance = msg.guild.roles.find(roleE => roleE.name == role)
-                    if (roleInstance) {
-                        roleInstance.setMentionable(true, 'Role needs to be pinged')
-                        .then(updated => {
-                          msg.channel.send("<@&"+roleInstance.id+">")
-                          setTimeout(() => roleInstance.setMentionable(false, "Pinging done"), pingIntervalPing)
-                        })
-                        .catch(console.error)
-                    } else {
+            let getPingerRoleForServer = fun.checkPingRoleServerEntry(serverID, db, (_, row) => {
+                if (msg.member.roles.some(role => role.id === fun.filter(row.role_id))) {
+                    let role = message.replace(";!ping", "").replace(/^\s+/g, '')
+                    if (role.includes("@") || role.includes("&") || role.includes("!")) {
                         let embed = new Discord.RichEmbed()
                         embed.setTitle("Event role and channel")
-                        embed.setDescription("Role doesn't exists :/")
+                        embed.setDescription("Bad synatx, the correct synatx is : `;!ping <role-name>.` Don't mention the role")
                         msg.channel.send(embed)
+                    } else {
+                        let roleInstance = msg.guild.roles.find(roleE => roleE.name == role)
+                        if (roleInstance) {
+                            roleInstance.setMentionable(true, 'Role needs to be pinged')
+                            .then(updated => {
+                              msg.channel.send("<@&"+roleInstance.id+">")
+                              setTimeout(() => roleInstance.setMentionable(false, "Pinging done"), pingIntervalPing)
+                            })
+                            .catch(console.error)
+                        } else {
+                            let embed = new Discord.RichEmbed()
+                            embed.setTitle("Event role and channel")
+                            embed.setDescription("Role doesn't exists :/")
+                            msg.channel.send(embed)
+                        }
                     }
+                } else {
+                    msg.channel.send("Insufficient permissions")
+                }
+            })
+        }
+        if (message.includes(";!set-pinger-role")) {
+            let perms = msg.member.permissions
+            if (perms.has("ADMINISTRATOR")) {
+                let role = fun.getRole(message)
+                if (role) {
+                    fun.checkPingRole(serverID, db, role, (state) => {
+                        if (state == "exists") {
+                            msg.channel.send("A pinger role for this server already exists with this particular role")
+                        } else {
+                            fun.makeNewPingRole(serverID, db, role, (state) => {
+                                if (state === "done") {
+                                    msg.channel.send("Role pinger is set!")
+                                }
+                                if (state === "updated") {
+                                    msg.channel.send("Role pinger is updated!")
+                                }
+                            })
+                        }
+                    })
+                }else {
+                    msg.channel.send("You forgot to mention the role!")
                 }
             } else {
                 msg.channel.send("Insufficient permissions")

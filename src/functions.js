@@ -138,6 +138,70 @@ const changeRole = (serverID, db, roles, callback) => {
     })
 }
 /**
+ * Check if the ping role exists,
+ * @param  {string} serverID Id of the server of which we want the channel-id or role-id
+ * @param  {sqlite3} db sqlite3 db instance
+ * @param  {Array} [roles] Array of role-id and channel-id
+ * @param  {callback} callback callback as soon as we get fetch the ids
+ * @return {null}
+ */
+const checkPingRole = (serverID, db, roles, callback) => {
+    db.serialize(function() {
+        db.get("Select * FROM ping_roles WHERE role_id = ? AND server_id = ?", [roles[0], serverID], (err, row) => {
+            if (err) { console.log(err) }
+            if (typeof row == "undefined") {  callback("new", row) }else{ callback("exists", row) }
+        })
+    })
+}
+/**
+ * Check if the server entry for a role ping exists
+ * @param  {string} serverID Id of the server of which we want the channel-id or role-id
+ * @param  {sqlite3} db sqlite3 db instance
+ * @param  {callback} callback callback as soon as we get fetch
+ * @return {null}
+ */
+const checkPingRoleServerEntry = (serverID, db, callback) => {
+    db.serialize(function() {
+        db.get("SELECT * FROM ping_roles WHERE server_id = ?", [serverID], (err, row) => {
+            if (err) { console.log(err) }
+            typeof row == "undefined" ? callback(false, row) : callback(true, row)
+        })
+    })
+}
+/**
+ * Makes a new ping role or updates it. Depends if the entry exists or not
+ * @param  {string} serverID Id of the server of which we want the channel-id or role-id
+ * @param  {sqlite3} db sqlite3 db instance
+ * @param  {Array} [roles] Array of role-id and channel-id
+ * @param  {callback} callback callback as soon as we get fetch the ids
+ * @return {null}
+ */
+const makeNewPingRole = (serverID, db, roles, callback) => {
+    let cond = checkPingRoleServerEntry(serverID, db, (cond, _) => {
+        if (cond) {
+            db.serialize(function() {
+                db.run("UPDATE ping_roles SET role_id = ? WHERE server_id = ?", [roles[0], serverID], (err, row) => {
+                    if (err) { console.log(err) }
+                    callback("updated")
+                })
+            })
+        } else {
+            db.serialize(() => {
+                db.run("INSERT INTO ping_roles (role_id, server_id) VALUES (?1, ?2)" , {
+                    1: roles[0],
+                    2: serverID
+                }, (err) => {
+                    if (err) {
+                        console.error(err.message)
+                        callback("problem")
+                    }
+                    callback("done")
+                })
+            })
+        }
+    })
+}
+/**
  * Update the channel-id and the role-id for events of a given serverID
  * @param  {string} serverID Id of the server of which we want the channel-id or role-id
  * @param  {sqlite3} db sqlite3 db instance
@@ -190,3 +254,6 @@ exports.changeChannel = changeChannel
 exports.changeRole = changeRole
 exports.changeRoleAndChannel = changeRoleAndChannel
 exports.addAField = addAField
+exports.checkPingRole = checkPingRole
+exports.makeNewPingRole = makeNewPingRole
+exports.checkPingRoleServerEntry = checkPingRoleServerEntry
