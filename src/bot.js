@@ -191,58 +191,62 @@ bot.on('message', msg => {
             let perms = msg.member.permissions
             if (perms.has("ADMINISTRATOR")) {
                 let role = fun.getRole(message)
-                /**
-                 *  Check if the message is in a correct format
-                 */
-                if (!role[0].includes("@") || !role[0].includes("&") || !role[1].includes("#") || role[1].includes("!") || role[0].includes("!")) {
-                    let embed = new Discord.RichEmbed()
-                    embed.setTitle("Event role and channel")
-                    embed.setDescription("Bad synatx, the correct synatx is : `;!register <rolename> <channel-name>`")
-                    msg.channel.send(embed)
-                } else {
-                    let channelregID = fun.filter(role[1])
-                    let channelName = msg.guild.channels.find(ch => ch.id == channelregID).name
+                if (role && role[1]) {
                     /**
-                     * Check if the server exists. If it does not then create a new entry in the database
+                     *  Check if the message is in a correct format
                      */
-                    let response = fun.checkIfEventChannelExists(serverID, db, (state, row) => {
-                        if (state == "new") {
-                            fun.addAField(serverID, db, role, (res) => {
-                                if (res == "problem") {
-                                    msg.channel.send("There's a problem, the author is informed")
-                                }else if (res == "done") {
-                                    msg.channel.send("Role successfully set")
-                                }
-                            })
-                        } else if (state == "exists") {
-                            if (row.role_id == role[0] && row.channel_id == role[1]) {
-                                let embed = new Discord.RichEmbed()
-                                embed.setTitle("Event role and channel")
-                                embed.setDescription("This role already exists for channel " + role[1])
-                                msg.channel.send(embed)
-                            }else{
-                                if (row.role_id == role[0]) {
+                    if (!role[0].includes("@") || !role[0].includes("&") || !role[1].includes("#") || role[1].includes("!") || role[0].includes("!")) {
+                        let embed = new Discord.RichEmbed()
+                        embed.setTitle("Event role and channel")
+                        embed.setDescription("Bad synatx, the correct synatx is : `;!register <rolename> <channel-name>`")
+                        msg.channel.send(embed)
+                    } else {
+                        let channelregID = fun.filter(role[1])
+                        let channelName = msg.guild.channels.find(ch => ch.id == channelregID).name
+                        /**
+                         * Check if the server exists. If it does not then create a new entry in the database
+                         */
+                        let response = fun.checkIfEventChannelExists(serverID, db, (state, row) => {
+                            if (state == "new") {
+                                fun.addAField(serverID, db, role, (res) => {
+                                    if (res == "problem") {
+                                        msg.channel.send("There's a problem, the author is informed")
+                                    }else if (res == "done") {
+                                        msg.channel.send("Role successfully set")
+                                    }
+                                })
+                            } else if (state == "exists") {
+                                if (row.role_id == role[0] && row.channel_id == role[1]) {
                                     let embed = new Discord.RichEmbed()
                                     embed.setTitle("Event role and channel")
-                                    embed.setDescription("Changing channels")
+                                    embed.setDescription("This role already exists for channel " + role[1])
                                     msg.channel.send(embed)
-                                    fun.changeChannel(serverID, db, role, () => msg.channel.send("Done"))
-                                } else if (row.channel_id == role[1]) {
-                                    let embed = new Discord.RichEmbed()
-                                    embed.setTitle("Event role and channel")
-                                    embed.setDescription("Changing roles")
-                                    msg.channel.send(embed)
-                                    fun.changeRole(serverID, db, role, () => msg.channel.send("Done"))
-                                } else {
-                                    let embed = new Discord.RichEmbed()
-                                    embed.setTitle("Event role and channel")
-                                    embed.setDescription("Changing roles and channel")
-                                    msg.channel.send(embed)
-                                    fun.changeRoleAndChannel(serverID, db, role, () => msg.channel.send("Done"))
+                                }else{
+                                    if (row.role_id == role[0]) {
+                                        let embed = new Discord.RichEmbed()
+                                        embed.setTitle("Event role and channel")
+                                        embed.setDescription("Changing channels")
+                                        msg.channel.send(embed)
+                                        fun.changeChannel(serverID, db, role, () => msg.channel.send("Done"))
+                                    } else if (row.channel_id == role[1]) {
+                                        let embed = new Discord.RichEmbed()
+                                        embed.setTitle("Event role and channel")
+                                        embed.setDescription("Changing roles")
+                                        msg.channel.send(embed)
+                                        fun.changeRole(serverID, db, role, () => msg.channel.send("Done"))
+                                    } else {
+                                        let embed = new Discord.RichEmbed()
+                                        embed.setTitle("Event role and channel")
+                                        embed.setDescription("Changing roles and channel")
+                                        msg.channel.send(embed)
+                                        fun.changeRoleAndChannel(serverID, db, role, () => msg.channel.send("Done"))
+                                    }
                                 }
                             }
-                        }
-                    })
+                        })
+                    }
+                } else {
+                    msg.channel.send("Wrong syntax")
                 }
             } else {
                 msg.channel.send("Insufficient permissions")
@@ -250,31 +254,35 @@ bot.on('message', msg => {
         }
         if (message.includes(";!ping")) {
             let getPingerRoleForServer = fun.checkPingRoleServerEntry(serverID, db, (_, row) => {
-                if (msg.member.roles.some(role => role.id === fun.filter(row.role_id))) {
-                    let role = message.replace(";!ping", "").replace(/^\s+/g, '')
-                    if (role.includes("@") || role.includes("&") || role.includes("!")) {
-                        let embed = new Discord.RichEmbed()
-                        embed.setTitle("Event role and channel")
-                        embed.setDescription("Bad synatx, the correct synatx is : `;!ping <role-name>.` Don't mention the role")
-                        msg.channel.send(embed)
-                    } else {
-                        let roleInstance = msg.guild.roles.find(roleE => roleE.name == role)
-                        if (roleInstance) {
-                            roleInstance.setMentionable(true, 'Role needs to be pinged')
-                            .then(updated => {
-                              msg.channel.send("<@&"+roleInstance.id+">")
-                              setTimeout(() => roleInstance.setMentionable(false, "Pinging done"), pingIntervalPing)
-                            })
-                            .catch(console.error)
-                        } else {
+                if (row) {
+                    if (msg.member.roles.some(role => role.id === fun.filter(row.role_id))) {
+                        let role = message.replace(";!ping", "").replace(/^\s+/g, '')
+                        if (role.includes("@") || role.includes("&") || role.includes("!")) {
                             let embed = new Discord.RichEmbed()
                             embed.setTitle("Event role and channel")
-                            embed.setDescription("Role doesn't exists :/")
+                            embed.setDescription("Bad synatx, the correct synatx is : `;!ping <role-name>.` Don't mention the role")
                             msg.channel.send(embed)
+                        } else {
+                            let roleInstance = msg.guild.roles.find(roleE => roleE.name == role)
+                            if (roleInstance) {
+                                roleInstance.setMentionable(true, 'Role needs to be pinged')
+                                .then(updated => {
+                                  msg.channel.send("<@&"+roleInstance.id+">")
+                                  setTimeout(() => roleInstance.setMentionable(false, "Pinging done"), pingIntervalPing)
+                                })
+                                .catch(console.error)
+                            } else {
+                                let embed = new Discord.RichEmbed()
+                                embed.setTitle("Event role and channel")
+                                embed.setDescription("Role doesn't exists :/")
+                                msg.channel.send(embed)
+                            }
                         }
+                    } else {
+                        msg.channel.send("Insufficient permissions")
                     }
                 } else {
-                    msg.channel.send("Insufficient permissions")
+                  msg.channel.send("No role set for ping permission")
                 }
             })
         }

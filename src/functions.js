@@ -65,8 +65,10 @@ const helpEmbeds = () => {
     embed.addField("**;launch-list**", "Shows a list of 10 upcoming launches")
     embed.addField("**;next-launch**", "Returns a single but most near launch")
     embed.addField("**;event-role**", "Shows the role that is registered for pinging when a launch is near")
-    embed.addField("**;!ping <rolename>**", "Pings the event role.")
-    embed.addField("**;!register <@rolename> <#channel-name>**", "Use this to register a role that should be pinged when a launch is near. \n e.g `;!register @events-alert #general`")
+    embed.addField("**;!ping <rolename>**", "Pings the event role. Mention the **ROLE NAME**. Do not ping it")
+    embed.addField("**;!ping <rolename>**", "Pings the event role. Mention the **ROLE NAME**. Do not ping it")
+    embed.addField("**;!register <@rolename> <#channel-name>**", "Use this to register a role that should be pinged when a launch is near. \n e.g `;!register @events-alert #general`. Be sure to ping the role here.")
+    embed.addField("**JOIN THE LIFTOFF SERVER**", "https://discord.gg/w9J8suk")
     return embed
 }
 /**
