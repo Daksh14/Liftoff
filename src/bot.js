@@ -89,8 +89,8 @@ let interval = setInterval(() => {
                 // The "one day left" event ping is now postponed as
                 // there can be many launches in a day and this
                 // can become spamy
-                if (s == "in 15 minutes") {
-                    Array.from(bot.guilds).forEach(val => {
+                switch (s) {
+                    case "in 15 minutes" : Array.from(bot.guilds).forEach(val => {
                         try {
                             let id = Array.from(val)[0]
                             if (!literations.filter(e => e.server == id && e.launch == launchesInfo.name && e.time == launchesInfo.windowstart && e.timeleft == s).length > 0) {
@@ -111,10 +111,9 @@ let interval = setInterval(() => {
                             }
                         } catch (err) { console.log(err) }
                     })
+                    break;
+                    case "in 13 minutes" : literations = []
                 }
-              if (s == "in 13 minutes") {
-                literations = [];
-              }
             }
             catch (err) {
                 console.log(err)
@@ -141,7 +140,6 @@ bot.on('message', msg => {
                     console.log(err)
                   }
                 }).catch(err => {
-
                     console.log(err.message)
                     msg.channel.send("There's a problem, the author is informed")
                 })
@@ -282,7 +280,7 @@ bot.on('message', msg => {
                         msg.channel.send("Insufficient permissions")
                     }
                 } else {
-                  msg.channel.send("No role set for ping permission")
+                  msg.channel.send("No role set as a pinger")
                 }
             })
         }
@@ -296,11 +294,10 @@ bot.on('message', msg => {
                             msg.channel.send("A pinger role for this server already exists with this particular role")
                         } else {
                             fun.makeNewPingRole(serverID, db, role, (state) => {
-                                if (state === "done") {
-                                    msg.channel.send("Role pinger is set!")
-                                }
-                                if (state === "updated") {
-                                    msg.channel.send("Role pinger is updated!")
+                                switch (state) {
+                                    case "done": msg.channel.send("Role pinger is set!")
+                                    break;
+                                    case "updated": msg.channel.send("Role pinger is updated!")
                                 }
                             })
                         }
