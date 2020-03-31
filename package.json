@@ -12,6 +12,7 @@
         "fs-extra": "^8.1.0",
         "launchlib-js": "^1.0.0",
         "moment": "^2.24.0",
+        "sqlite-async": "^1.0.12",
         "sqlite3": "^4.1.0",
         "winston": "^3.2.1",
         "worker-threads": "^1.0.0"
