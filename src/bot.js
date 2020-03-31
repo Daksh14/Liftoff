@@ -8,7 +8,7 @@
  */
 const Discord = require("discord.js");
 const bot = new Discord.Client();
-const auth = "Njc2MTcxMjE0OTY4MDYxOTUy.Xn6FAw.sonTrzP5qwzUaF4QPOcmsT5GZmE";
+const auth = process.env.TOKEN;
 const botFunctions = require("./botFunctions.js");
 const utils = require("./utils.js");
 const http = require("http");
