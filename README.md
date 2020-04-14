@@ -8,12 +8,12 @@ https://launchlibrary.net API. This bot checks for recent launches and pings a g
 # Setup bot in your server
 |  command 	|  action 	|   	|  	|   	|
 |:-:	|:-:	|:-:	|---	|---	|
-|  `;launch-list` 	| `returns 10 recent launches`  	|   	|   	|   	|
+|  `;launch-list x` 	| `returns x recent launches`  	|   	|   	|   	|
 |   `;help-liftoff`	|  `returns the command help list` 	|   	|   	|   	|
 |  `;!register <@rolename> <#channel-name>` 	|  `Register a role to ping and a channel for bot to ping in` 	|   	|   	|   	|
 |  `;next-launch` 	| `returns the most recent launch`  	|   	|   	|   	|
 |  `;!ping <rolename>` 	| `Ping the role manually via this command`  	|   	|   	|   	|
-
+And many more!
 
 Or do `;help-liftoff` in your server in any channel.
 
