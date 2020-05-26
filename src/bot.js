@@ -8,7 +8,7 @@
  */
 const Discord = require("discord.js");
 const bot = new Discord.Client();
-const auth = process.env.TOKEN;
+const auth = process.ENV.token;
 const botFunctions = require("./botFunctions.js");
 const utils = require("./utils.js");
 const http = require("http");
@@ -25,9 +25,8 @@ const literations = [];
 setInterval(() => {
     utils.getRecentLaunch().then(launches => {
         const timeleft = utils.fromNow(launches.windowstart);
-        console.log(timeleft);
         if (timeleft === "in 15 minutes") {
-            bot.guilds.forEach(server => {
+            bot.guilds.cache.forEach(server => {
                 if (
                     !literations.filter(
                         e =>
@@ -38,23 +37,23 @@ setInterval(() => {
                     ).length > 0
                 ) {
                     botFunctions.checkIfEventChannelExists(server.id).then(res => {
-                        let roleInstance = bot.guilds
+                        let roleInstance = bot.guilds.cache
                             .get(server.id)
-                            .roles.find(
+                            .roles.cache.find(
                                 roleE => roleE.id === utils.filterRole(res.row.role_id)
                             );
                         botFunctions.pingRole(roleInstance).then(() => {
                             roleInstance
                                 .setMentionable(true, "Role needs to be pinged")
                                 .then(state => {
-                                    bot.channels
+                                    bot.channels.cache
                                         .get(utils.filterRole(res.row.channel_id))
                                         .send(embeds.nextLaunchEmbedsQuick(launches));
 
                                     return state;
                                 })
                                 .then(state =>
-                                    bot.channels
+                                    bot.channels.cache
                                     .get(utils.filterRole(res.row.channel_id))
                                     .send(`<@&${state.id}> Launch incoming`)
                                 )
@@ -222,7 +221,8 @@ bot.on("message", msg => {
         }
     }
 });
-bot.on("ready", () => {
+
+bot.once("ready", () => {
     botFunctions.setActivity(bot);
     console.log(`Logged in`);
 });

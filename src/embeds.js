@@ -4,7 +4,7 @@ const utils = require("./utils.js");
 
 exports.nextLaunchEmbeds = async () => {
     return utils.getRecentLaunch().then(launches => {
-        let embed = new Discord.RichEmbed().setTitle(launches.name);
+        let embed = new Discord.MessageEmbed().setTitle(launches.name);
         if (launches.missions[0]) {
             if (launches.missions[0].description.length > 100) {
                 embed.setDescription(
@@ -46,7 +46,7 @@ exports.nextLaunchEmbeds = async () => {
     });
 };
 exports.nextLaunchEmbedsQuick = launches => {
-    let embed = new Discord.RichEmbed().setTitle(launches.name);
+    let embed = new Discord.MessageEmbed().setTitle(launches.name);
     if (launches.missions[0]) {
         if (launches.missions[0].description.length > 100) {
             embed.setDescription(
@@ -93,7 +93,7 @@ exports.helpEmbeds = (bot, role) => {
     } else {
         roleId = role.role_id;
     }
-    return new Discord.RichEmbed()
+    return new Discord.MessageEmbed()
         .setTitle("COMMANDS AND INFO")
         .addField(
             "**;launch-list <number>**",
@@ -117,18 +117,19 @@ exports.helpEmbeds = (bot, role) => {
             "Use this to register a role that should be pinged when a launch is near. \n e.g `;!register @events-alert #general`. Be sure to ping the role here."
         )
         .addField("**PINGER ROLE**", roleId)
-        .addField("**SERVING**", `${bot.guilds.size} Guilds`)
+        .addField("**SERVING**", `${bot.guilds.cache.size} Guilds`)
         .addField("**JOIN THE LIFTOFF SERVER**", "https://discord.gg/w9J8suk");
+
 };
 exports.eventRoleInfoEmbeds = info => {
-    return new Discord.RichEmbed()
+    return new Discord.MessageEmbed()
         .setTitle("Roles to ping when launches are near")
         .setDescription(
             `Role:  ${info.roleId} \n Event Channel: ${info.channelId}`
         );
 };
 exports.launchListEmbeds = data => {
-    let embed = new Discord.RichEmbed();
+    let embed = new Discord.MessageEmbed()
     data.launches.forEach(launches => {
         let vid =
             typeof launches.vidURLs[0] === "undefined" ?
@@ -156,39 +157,39 @@ exports.launchListEmbeds = data => {
     return embed;
 };
 exports.badSyntaxRolePingEmbeds = () =>
-    new Discord.RichEmbed()
+    new Discord.MessageEmbed()
     .setTitle("Event role and channel")
     .setDescription(
         "Bad synatx, the correct synatx is : `;!ping <role-name>.` Don't mention the role"
     );
 
 exports.roleNonExistentEmbeds = () =>
-    new Discord.RichEmbed()
+    new Discord.MessageEmbed()
     .setTitle("Event role and channel")
     .setDescription("Role doesn't exists :/");
 
 exports.badSyntaxRegisterRole = () =>
-    new Discord.RichEmbed()
+    new Discord.MessageEmbed()
     .setTitle("Event role and channel")
     .setDescription(
         "Bad synatx, the correct synatx is : `;!register <rolename> <channel-name>`"
     );
 
 exports.registerRoleExists = role =>
-    new Discord.RichEmbed()
+    new Discord.MessageEmbed()
     .setTitle("Event role and channel")
     .setDescription("This role already exists for channel " + role[1]);
 
 exports.changingChannelEmbeds = () =>
-    new Discord.RichEmbed()
+    new Discord.MessageEmbed()
     .setTitle("Event role and channel")
     .setDescription("Changing channels");
 
 exports.changingRolesEmbeds = () =>
-    new Discord.RichEmbed()
+    new Discord.MessageEmbed()
     .setTitle("Event role and channel")
     .setDescription("Changing roles");
 exports.changingRolesAndChannelEmbeds = () =>
-    new Discord.RichEmbed()
+    new Discord.MessageEmbed()
     .setTitle("Event role and channel")
     .setDescription("Changing roles and channel");

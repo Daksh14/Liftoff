@@ -4,9 +4,12 @@
     "description": "Liftoff is a space launch info bot",
     "main": "src/bot.js",
     "author": "weegee",
+    "engines": {
+        "node": "12.16.3"
+    },
     "dependencies": {
         "discord-rich-presence": "0.0.8",
-        "discord.js": "^11.5.1",
+        "discord.js": "^12.2.0",
         "ejs": "^3.0.1",
         "express": "^4.17.1",
         "fs-extra": "^8.1.0",
