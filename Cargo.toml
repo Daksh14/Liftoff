@@ -15,3 +15,7 @@ colored = "2"
 diesel = { version = "1.4.0", features = ["sqlite"] }
 lazy_static = "1.4.0"
 rtoml = "0.1.1"
+
+
+[profile.release]
+lto = true
