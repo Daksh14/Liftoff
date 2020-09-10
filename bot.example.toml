@@ -1,0 +1,3 @@
+[bot_credentials]
+token = "bot-token-here"
+db = "database-name-here"

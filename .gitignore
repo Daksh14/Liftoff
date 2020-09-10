@@ -10,6 +10,12 @@ Icon
 # Thumbnails
 ._*
 
+# database
+*.sqlite3
+
+# toml file
+bot.toml
+
 # Files that might appear in the root of a volume
 .DocumentRevisions-V100
 .fseventsd
