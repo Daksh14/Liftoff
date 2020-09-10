@@ -25,7 +25,11 @@ use std::sync::Mutex;
 
 lazy_static! {
     static ref CON: Mutex<SqliteConnection> = Mutex::new(establish_connection());
-    static ref TOML: Reader = RToml::file("bot.toml").parse().ok().unwrap();
+    static ref TOML: Reader = RToml::file("bot.toml")
+        .parse()
+        .map_err(|_| panic!("{:?}", "bot.toml not found"))
+        .ok()
+        .unwrap();
     static ref MINUTES_LEFT: &'static str = "0 days 0 hours 15 minutes";
 }
 
