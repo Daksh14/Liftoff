@@ -54,7 +54,7 @@ async fn eventrole(ctx: &Context, msg: &Message) -> CommandResult {
 #[command]
 #[only_in(guilds)]
 #[required_permissions("ADMINISTRATOR")]
-#[description = "Register an event role to ping channel id to send launches. \n Usage: ;register {@role} {#channel}"]
+#[description = "Register an event role to ping channel id to send launches. \n Usage: ;register {roleID} {#channel}"]
 async fn register(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     let mut msg_string = String::new();
     use crate::schema::events::dsl::*;
