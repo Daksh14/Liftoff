@@ -18,6 +18,7 @@ use serenity::async_trait;
 use serenity::client::{Client, Context, EventHandler};
 use serenity::framework::standard::StandardFramework;
 use serenity::model::prelude::*;
+use std::collections::HashSet;
 use std::sync::Arc;
 use tokio::time::{interval, Duration};
 
@@ -31,6 +32,7 @@ lazy_static! {
         .ok()
         .unwrap();
     static ref MINUTES_LEFT: &'static str = "0 days 0 hours 15 minutes";
+    static ref LAUNCHES: Mutex<HashSet<std::string::String>> = Mutex::new(HashSet::new());
 }
 
 pub mod commands;
@@ -88,7 +90,9 @@ pub fn poll_launches(client: Arc<Client>) {
             task!({
                 let mut launches = Launches::get_recent_launch().await.unwrap();
                 let launch = launches.launches.remove(0);
-                if time_left(&launch.windowstart) == *MINUTES_LEFT {
+                if time_left(&launch.windowstart) == *MINUTES_LEFT
+                    && !LAUNCHES.lock().unwrap().contains(&launch.name)
+                {
                     let mut guilds = vec![Events::new()];
                     lock!(|db| {
                         if let Ok(guild_info) = events.load::<Events>(db) {
@@ -126,6 +130,7 @@ pub fn poll_launches(client: Arc<Client>) {
                                         })
                                         .await
                                     {
+                                        LAUNCHES.lock().unwrap().insert(launch.name.clone());
                                         Role::edit(role, cache_and_http.http.clone(), |r| {
                                             r.mentionable(false)
                                         })

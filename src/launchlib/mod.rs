@@ -175,12 +175,11 @@ pub fn time_left(windowstart: &String) -> String {
         .unwrap();
     let now_utc: DateTime<Utc> = Utc::now();
     let duration_since = d.signed_duration_since(now_utc);
-    let days = duration_since.num_days();
     let secds = duration_since.num_seconds();
     format!(
         "{} days {} hours {} minutes",
-        days,
-        secds / 60 / 60,
-        secds / 60 % 60,
+        (secds % 2592000) / 86400,
+        (secds % 86400) / 3600,
+        (secds % 3600) / 60,
     )
 }
